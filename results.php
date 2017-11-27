@@ -28,10 +28,10 @@
                 readfile($filename); //affichage du fichier html dans le navigateur
             }
 
-            function getResultsFromServer() {
+            function getResultsFromServer($terme) {
                 $url = 'http://www.jeuxdemots.org/rezo-dump.php?gotermsubmit=Chercher&';
                 $data = array(
-                    'gotermrel' => utf8_decode($_GET["terme"])
+                    'gotermrel' => utf8_decode($terme)
                 );
                 $options = array(
                     'http' => array(
@@ -110,10 +110,10 @@
                 print_r($definition);
             }
 
-            function displayNodesNames($allNodes, &$nodesArray) {
+            function displayNodesNames($allNodes, &$nodesArray, $rtId) {
                 echo '<br /> Nombre de termes: ' . count($nodesArray) . '<br /><br />';
                 foreach ($nodesArray as $key => $value) {
-                    echo '<a title="id=' . $key . ' poids= ' . $value . '" href="./results.php?terme=' . $allNodes[$key] . '&relationType=' . $_GET["relationType"] . '">' . $allNodes[$key] . '</a>';
+                    echo '<a title="id=' . $key . ' poids= ' . $value . '" href="./results.php?terme=' . $allNodes[$key] . '&relationType=' . $rtId . '">' . $allNodes[$key] . '</a>';
                     echo ' | ';
                 }
             }
@@ -156,7 +156,15 @@
                 return $nodes;
             }
 
-            $filename = './CACHE/' . $_GET["terme"] . '.html';
+	    if (defined('STDIN')) { // Si le script php est exécuté en ligne de commande
+ 		 $terme = $argv[1];
+		 $rtId = $argv[2];
+	    } else { // si le script est exécuté depuis un navigateur web.
+ 		 $terme = $_GET['terme']; // Recupération du terme
+		 $rtId =  $_GET["relationType"]; //Recupération du type de relation choisi dans le formulaire
+	    }
+
+            $filename = './CACHE/' . $terme . '.html';
 
             if (file_exists($filename)) { //si la recherche a déja été effectuée par le passé, on utilise le cache.
                 getResultsFromCache($filename);
@@ -164,7 +172,7 @@
                 // Start output buffering
                 ob_start();
 
-                $ServerResults = getResultsFromServer(); // requête au serveur
+                $ServerResults = getResultsFromServer($terme); // requête au serveur
                 $ServerResults = print_r(utf8_encode($ServerResults), true);
                 
                 $allNodes = getAllNodesFromResults($ServerResults);
@@ -178,17 +186,16 @@
                 displayDefinitions($ServerResults);
                 echo '<br/>';
 
-                $rtId = $_GET["relationType"]; // Recupération du type de relation choisi dans le formulaire
                 if ($rtId == "-1") { // -1 = tous les types de relations
                     foreach ($allRelationTypes as $id => $rtName) { // Pour chaque types de relation
                         echo '<hr>';
                         echo '<center><u><h3>' . $rtName . ' : </h3></u></center>';
                         echo '<u><h4> Relations sortantes : </h4></u>';
                         $nodesFromOutRelations = getNodesIdsFromOutRelations($allOutRelations, $id);
-                        displayNodesNames($allNodes, $nodesFromOutRelations);
+                        displayNodesNames($allNodes, $nodesFromOutRelations, $rtId);
                         echo '<u><h4> Relations entrantes :</h4></u>';
                         $nodesFromInRelations =  getNodesIdsFromInRelations($allInRelations, $id);
-                        displayNodesNames($allNodes,$nodesFromInRelations);
+                        displayNodesNames($allNodes,$nodesFromInRelations, $rtId);
                     }
                 } else {
                     $rtName = $allRelationTypes[$rtId];
@@ -196,10 +203,10 @@
                     echo '<center><u><h3>' . $rtName . ' : </h3></u></center>';
                     echo '<u><h4> Relations sortantes :</h4></u>';
                     $nodesFromOutRelations = getNodesIdsFromOutRelations($allOutRelations, $rtId);
-                    displayNodesNames($allNodes, $nodesFromOutRelations);
+                    displayNodesNames($allNodes, $nodesFromOutRelations, $rtId);
                     echo '<u><h4> Relations entrantes :</h4></u>';
                     $nodesFromInRelations = getNodesIdsFromInRelations($allInRelations, $rtId);
-                    displayNodesNames($allNodes, $nodesFromInRelations);
+                    displayNodesNames($allNodes, $nodesFromInRelations, $rtId);
                 }
                 // saving captured output to file
                 file_put_contents($filename, ob_get_contents());
