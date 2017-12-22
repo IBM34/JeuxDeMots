@@ -3,6 +3,7 @@
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
       <title>JDMClient</title>
+	<link rel="stylesheet" href="jquery-ui.css">
    </head>
    <body>
       <center>
@@ -10,7 +11,7 @@
          <form action="results.php">
          <div class="form1">
             <dl>
-               <input name="terme" type="text" value="" size="35" required /><br />
+               <input name="terme" id="terme" type="text" value="" size="35" required /><br />
                <br />	 
 	       <select name="relationType">    
 	       <option value="-1">Tout</option>
@@ -40,5 +41,8 @@
             </dl>
          </div>
       </center>
+	<script src="jquery-3.2.1.min.js"></script>
+  <script src="jquery-ui.js"></script>
+	<script type="text/javascript" src="autocomplete.js"></script> 
    </body>
 </html>
