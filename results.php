@@ -3,11 +3,37 @@
     <head>
         <meta http-equiv=Content-Type content="text/html; charset=utf-8" /> 
         <title>JDMClient</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="jquery-ui.css">
+        <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     </head>
 
     <body>
+        
+        <div class="header">
+            <center><a href="index.php"><img src="img/logo.jpg" style="width: 40%; height: 40%"/></a></center>
+</div>
 
-        <div id="Resultats">
+<div id="navbar">
+       
+    <a href="index.php">Accueil</a>
+    
+      <form autocomplete="off" class="searchForm"  action="results.php">
+        <div class="input-group">
+            <input name="terme" id="terme" type="text" class="form-control" placeholder="Entrez un terme" name="q">
+            <div class="input-group-btn">
+                <button type="submit" class="btn btn-success" type="button">Rechercher</button>
+            </div>
+        </div>
+        </form>
+    
+</div>
+
+<div class="content">
+
 
             <?php
 
@@ -23,8 +49,6 @@
                     fwrite($toUpdateFile, $filename);
                     fclose($toUpdateFile);
                 }
-
-                echo "FROM CACHE :";
                 readfile($filename); //affichage du fichier html dans le navigateur
             }
 
@@ -161,7 +185,8 @@
 		 $rtId = $argv[2];
 	    } else { // si le script est exécuté depuis un navigateur web.
  		 $terme = $_GET['terme']; // Recupération du terme
-		 $rtId =  $_GET["relationType"]; //Recupération du type de relation choisi dans le formulaire
+		 //$rtId =  $_GET["relationType"]; //Recupération du type de relation choisi dans le formulaire
+                 $rtId = -1;
 	    }
 
             $filename = './CACHE/' . $terme . '.html';
@@ -180,33 +205,71 @@
                 $allInRelations = getAllInRelationsFromResults($ServerResults);
                 $allRelationTypes = getAllRelationTypesFromResults($ServerResults);
 
-                echo '<center><u><h1>Résultats</h1></u></center>';
-                echo '<hr>';
-                echo '<center><u><h3>Définitions</h3></u></center>';
+                //echo '<hr>';
+                 echo '<div class="panel-group" id="accordion">';
+                echo '<div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          <a data-toggle="collapse" data-parent="#accordion" href="#collapsedef">
+                         <center><b>Définitions</b></center></a>
+                        </h4>
+                      </div>
+                      <div id="collapsedef" class="panel-collapse collapse in">
+                        <div class="panel-body">';
                 displayDefinitions($ServerResults);
-                echo '<br/>';
+                 echo '</div>
+                        </div>
+                      </div>';
 
                 if ($rtId == "-1") { // -1 = tous les types de relations
                     foreach ($allRelationTypes as $id => $rtName) { // Pour chaque types de relation
-                        echo '<hr>';
-                        echo '<center><u><h3>' . $rtName . ' : </h3></u></center>';
+                        //echo '<hr>';
+                       echo ' 
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          <a data-toggle="collapse" data-parent="#accordion" href="#collapse'.$id.'">
+                         <center><b>'. $rtName .'</b></center></a>
+                        </h4>
+                      </div>
+                      <div id="collapse'.$id.'" class="panel-collapse collapse">
+                        <div class="panel-body">';
+                       // echo '<div id="rtype"><center><u><h3>' . $rtName . ' : </h3></u></center></div>';
                         echo '<u><h4> Relations sortantes : </h4></u>';
                         $nodesFromOutRelations = getNodesIdsFromOutRelations($allOutRelations, $id);
                         displayNodesNames($allNodes, $nodesFromOutRelations, $rtId);
                         echo '<u><h4> Relations entrantes :</h4></u>';
                         $nodesFromInRelations =  getNodesIdsFromInRelations($allInRelations, $id);
                         displayNodesNames($allNodes,$nodesFromInRelations, $rtId);
+                        echo '</div>
+                        </div>
+                      </div>';
                     }
+                     echo '</div>';
                 } else {
                     $rtName = $allRelationTypes[$rtId];
-                    echo '<hr>';
-                    echo '<center><u><h3>' . $rtName . ' : </h3></u></center>';
+                    //echo '<hr>';
+                     echo '<div class="panel-group" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapse'.$rtId.'">
+       <center><b>'. $rtName .'</b></center></a>
+      </h4>
+    </div>
+    <div id="collapse'.$rtId.'" class="panel-collapse collapse">
+      <div class="panel-body">';
+                    //echo '<center><u><h3>' . $rtName . ' : </h3></u></center>';
                     echo '<u><h4> Relations sortantes :</h4></u>';
                     $nodesFromOutRelations = getNodesIdsFromOutRelations($allOutRelations, $rtId);
                     displayNodesNames($allNodes, $nodesFromOutRelations, $rtId);
                     echo '<u><h4> Relations entrantes :</h4></u>';
                     $nodesFromInRelations = getNodesIdsFromInRelations($allInRelations, $rtId);
                     displayNodesNames($allNodes, $nodesFromInRelations, $rtId);
+                    echo '</div>
+    </div>
+  </div>
+ </div>';
                 }
                 // saving captured output to file
                 file_put_contents($filename, ob_get_contents());
@@ -217,6 +280,8 @@
             ?>
 
         </div>
-
+  <script src="jquery-ui.js"></script>
+        <script type="text/javascript" src="autocomplete.js"></script> 
+         <script type="text/javascript" src="navbar.js"></script>
     </body>
 </html>

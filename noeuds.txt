@@ -1,1 +1,1 @@
-chat,chien,rat,rue,girage,couscous,garage
+femme,homme,enfant,animal,maison,voiture,cuisine,eau,personne,manger,musique,mer,ville,maladie,film,oiseau,argent,livre,amour,rue,poisson,lettre,main,mort,dormir,fruit,individu,lit,fille,bateau,guerre,chien,avion,arbre,chat,rouge,restaurant,jeu,chambre,soleil,peur,pays,

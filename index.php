@@ -1,47 +1,42 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-   <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-      <title>JDMClient</title>
-	<link rel="stylesheet" href="jquery-ui.css">
-   </head>
-   <body>
-      <center>
-         <h3>Saisissez un terme :</h3>
-         <form action="results.php">
-         <div class="form1">
-            <dl>
-               <input name="terme" id="terme" type="text" value="" size="35" required /><br />
-               <br />	 
-	       <select name="relationType">    
-	       <option value="-1">Tout</option>
-               <?php
+    <head>
+        <meta http-equiv=Content-Type content="text/html; charset=utf-8" /> 
+        <title>JDMClient</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="jquery-ui.css">
+        <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
 
-		$filename = "relationTypes.txt";
-		$file = file_get_contents($filename);
+    <body>
+        
+        <div class="header">
+            <center><a href="index.php"><img src="img/logo.jpg" style="width: 40%; height: 40%"/></a></center>
+</div>
 
-		 foreach(preg_split("/((\r?\n)|(\r\n?))/", $file) as $line){ // parcours chaque ligne
-	
-			$rt = explode("|", $line);
+<div id="navbar">
+       
+       <a class="active" href="index.php">Accueil</a>
+    
+      <form autocomplete="off" class="searchForm"  action="results.php">
+        <div class="input-group">
+            <input name="terme" id="terme" type="text" class="form-control" placeholder="Entrez un terme" name="q">
+            <div class="input-group-btn">
+                <button type="submit" class="btn btn-success" type="button">Rechercher</button>
+            </div>
+        </div>
+        </form>
+    
+</div>
 
-			if ($line!=''){
-	
-				$rt[0] = substr($rt[0], 5);
-				$rt[1] = substr($rt[1], 6,-1);
-                                $rt[2] = substr($rt[2], 12,-1);
-			    
-				    echo  '<option value="'.$rt[0].'">'.$rt[1].' - '.$rt[2].'</option>';
-			}
-		    } 
+<div class="content">
+    
 
-		echo '</select>';
-
-		?>
-               <input name="valid" type="submit" id="valid" value="Chercher" class="valid" /></p>
-            </dl>
-         </div>
-      </center>
-	<script src="jquery-3.2.1.min.js"></script>
+</div>
+        <script src="jquery-3.2.1.min.js"></script>
   <script src="jquery-ui.js"></script>
 	<script type="text/javascript" src="autocomplete.js"></script> 
    </body>
