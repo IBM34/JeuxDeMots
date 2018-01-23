@@ -11,35 +11,35 @@
     </head>
 
     <body>
-        
+
         <div class="header">
             <center><a href="index.php"><img src="./img/logo.jpg" style="width: 40%; height: 40%"/></a></center>
-</div>
-
-<div id="navbar">
-       
-       <a class="active" href="index.php">Accueil</a>
-    
-      <form autocomplete="off" class="searchForm"  action="results.php">
-        <div class="input-group">
-            <input name="terme" id="terme" type="text" class="form-control" placeholder="Entrez un terme" name="q">
-            <div class="input-group-btn">
-                <button type="submit" class="btn btn-success" type="button">Rechercher</button>
-            </div>
         </div>
-        </form>
-    
-</div>
 
-<div class="content">
-    
-    
-    
+        <div id="navbar">
 
-</div>
-          <script src="./js/jquery.min.js"></script>
+            <a class="active" href="index.php">Accueil</a>
+
+            <form autocomplete="off" class="searchForm"  action="results.php">
+                <div class="input-group">
+                    <input name="terme" id="terme" type="text" class="form-control" placeholder="Entrez un terme" name="q">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-success" type="button">Rechercher</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="content">
+
+
+
+
+        </div>
+        <script src="./js/jquery.min.js"></script>
         <script src="./js/jquery-ui.js"></script>
-           <script src="./js/bootstrap.min.js"></script>
-           <script type="text/javascript" src="./js/autocomplete.js"></script> 
-   </body>
+        <script src="./js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="./js/autocomplete.js"></script> 
+    </body>
 </html>
