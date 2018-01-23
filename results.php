@@ -4,17 +4,15 @@
         <meta http-equiv=Content-Type content="text/html; charset=utf-8" /> 
         <title>JDMClient</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <link rel="stylesheet" href="jquery-ui.css">
-        <link rel="stylesheet" href="style.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <link rel="stylesheet" href="./css/jquery-ui.css">
+        <link rel="stylesheet" href="./css/style.css">
     </head>
 
     <body>
         
         <div class="header">
-            <center><a href="index.php"><img src="img/logo.jpg" style="width: 40%; height: 40%"/></a></center>
+            <center><a href="index.php"><img src="./img/logo.jpg" style="width: 40%; height: 40%"/></a></center>
 </div>
 
 <div id="navbar">
@@ -193,12 +191,18 @@
 
             if (file_exists($filename)) { //si la recherche a déja été effectuée par le passé, on utilise le cache.
                 getResultsFromCache($filename);
-            } else { // sinon on envoi une requête au serveur pour recuperer les données et les traiter.
+            } 
+            else { // sinon on envoi une requête au serveur pour recuperer les données et les traiter.
                 // Start output buffering
                 ob_start();
 
                 $ServerResults = getResultsFromServer($terme); // requête au serveur
                 $ServerResults = print_r(utf8_encode($ServerResults), true);
+                
+                if (strpos($ServerResults, '<CODE>') == false) {
+                    echo "<center><h2 style='color : red;'>Le terme n'existe pas</h2></center>";
+            }
+            else{
                 
                 $allNodes = getAllNodesFromResults($ServerResults);
                 $allOutRelations = getAllOutRelationsFromResults($ServerResults);
@@ -277,11 +281,14 @@
                  
                 ob_end_flush();
             }
+            }
             ?>
 
         </div>
-  <script src="jquery-ui.js"></script>
-        <script type="text/javascript" src="autocomplete.js"></script> 
-         <script type="text/javascript" src="navbar.js"></script>
+  <script src="./js/jquery.min.js"></script>
+        <script src="./js/jquery-ui.js"></script>
+           <script src="./js/bootstrap.min.js"></script>
+           <script type="text/javascript" src="./js/autocomplete.js"></script> 
+           <script type="text/javascript" src="./js/navbar.js"></script>
     </body>
 </html>

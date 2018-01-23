@@ -4,17 +4,16 @@
         <meta http-equiv=Content-Type content="text/html; charset=utf-8" /> 
         <title>JDMClient</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <link rel="stylesheet" href="jquery-ui.css">
-        <link rel="stylesheet" href="style.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <link rel="stylesheet" href="./css/jquery-ui.css">
+        <link rel="stylesheet" href="./css/style.css">
+
     </head>
 
     <body>
         
         <div class="header">
-            <center><a href="index.php"><img src="img/logo.jpg" style="width: 40%; height: 40%"/></a></center>
+            <center><a href="index.php"><img src="./img/logo.jpg" style="width: 40%; height: 40%"/></a></center>
 </div>
 
 <div id="navbar">
@@ -34,10 +33,13 @@
 
 <div class="content">
     
+    
+    
 
 </div>
-        <script src="jquery-3.2.1.min.js"></script>
-  <script src="jquery-ui.js"></script>
-	<script type="text/javascript" src="autocomplete.js"></script> 
+          <script src="./js/jquery.min.js"></script>
+        <script src="./js/jquery-ui.js"></script>
+           <script src="./js/bootstrap.min.js"></script>
+           <script type="text/javascript" src="./js/autocomplete.js"></script> 
    </body>
 </html>
