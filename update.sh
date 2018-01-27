@@ -1,5 +1,5 @@
 #!/bin/bash
-filename="update.txt"
+filename="toUpdate.txt"
 while read -r line || [ -n "$line" ]
 do
     terme="$line"

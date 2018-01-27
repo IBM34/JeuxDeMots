@@ -35,7 +35,7 @@
 
             <?php
 
-            function getResultsFromCache($filename) {
+            function getResultsFromCache($filename, $terme) {
                 $now = time();
                 $fileLastModifDate = filemtime($filename);
                 $datediff = $now - $fileLastModifDate;
@@ -43,8 +43,8 @@
                 // si le fichier de cache date de plus de 15 jours, on ajoute son nom dans la liste des fichiers à  update.
 
                 if (floor($datediff / (60 * 60 * 24)) >= 15) {
-                    $toUpdateFile = fopen("toUpdate.txt", "wr") or die("Unable to open file!");
-                    fwrite($toUpdateFile, $filename);
+                    $toUpdateFile = fopen("toUpdate.txt", "a") or die("Unable to open file!");
+                    fwrite($toUpdateFile, $terme."\n");
                     fclose($toUpdateFile);
                 }
                 readfile($filename); //affichage du fichier html dans le navigateur
@@ -136,7 +136,7 @@
                 echo '<br /> Nombre de termes: ' . count($nodesArray) . '<br /><br />';
                 foreach ($nodesArray as $key => $value) {
                     if (array_key_exists($key, $allNodes)) {
-                        echo '<a title="id=' . $key . ' poids= ' . $value . '" href="./results.php?terme=' . $allNodes[$key] . '&relationType=' . $rtId . '">' . $allNodes[$key] . '</a>';
+                        echo '<a title="id=' . $key . ' poids= ' . $value . '" href="./results.php?terme=' . $allNodes[$key] .'">' . $allNodes[$key] . '</a>';
                         echo ' | ';
                     }
                 }
@@ -182,19 +182,20 @@
 
             if (defined('STDIN')) { // Si le script php est exécuté en ligne de commande
                 $terme = $argv[1];
-                $rtId = $argv[2];
             } else { // si le script est exécuté depuis un navigateur web.
                 $terme = $_GET['terme']; // Recupération du terme
-                //$rtId =  $_GET["relationType"]; //Recupération du type de relation choisi dans le formulaire
-                $rtId = -1;
             }
+            $rtId = -1;
 
             $filename = './CACHE/' . $terme . '.html';
 
-            if (file_exists($filename)) { //si la recherche a déja été effectuée par le passé, on utilise le cache.
-                getResultsFromCache($filename);
+            if (file_exists($filename) && !(defined('STDIN'))) { //si la recherche a déja été effectuée par le passé, on utilise le cache.
+                getResultsFromCache($filename,$terme);
             } else { // sinon on envoi une requête au serveur pour recuperer les données et les traiter.
                 // Start output buffering
+                 if (file_exists($filename)) {
+                     unlink($filename);
+                }
                 ob_start();
 
                 $ServerResults = getResultsFromServer($terme); // requête au serveur
@@ -215,9 +216,12 @@
                             $allInRelations = null;
                         }
                         $allRelationTypes = getAllRelationTypesFromResults($ServerResults);
-
-                        //echo '<hr>';
+                        
+                        
                         echo '<div class="panel-group" id="accordion">';
+                        $definition = getTextBetweenStrings("<def>","</def>", $ServerResults);
+                        if (strlen($definition)>1){                        
+                        
                         echo '<div class="panel panel-default">
                                 <div class="panel-heading">
                                   <h4 class="panel-title">
@@ -231,10 +235,18 @@
                         echo '</div>
                                 </div>
                               </div>';
+                        }
 
-                        if ($rtId == "-1") { // -1 = tous les types de relations
+                        
                             foreach ($allRelationTypes as $id => $rtName) { // Pour chaque types de relation
-                                //echo '<hr>';
+                                $nodesFromOutRelations = getNodesIdsFromOutRelations($allOutRelations, $id);
+                                 if ($allInRelations != null) {
+                                      $nodesFromInRelations = getNodesIdsFromInRelations($allInRelations, $id);
+                                 }
+                                 else {
+                                     $nodesFromInRelations = null;
+                                 }
+                                 if (count($nodesFromInRelations)!=0 || count($nodesFromOutRelations)!=0){
                                 echo '<div class="panel panel-default">
                                         <div class="panel-heading">
                                           <h4 class="panel-title">
@@ -244,48 +256,22 @@
                                         </div>
                                         <div id="collapse' . $id . '" class="panel-collapse collapse">
                                           <div class="panel-body">';
-                                // echo '<div id="rtype"><center><u><h3>' . $rtName . ' : </h3></u></center></div>';
+                                 if (count($nodesFromOutRelations)!=0){
                                 echo '<u><h4> Relations sortantes : </h4></u>';
-                                $nodesFromOutRelations = getNodesIdsFromOutRelations($allOutRelations, $id);
                                 displayNodesNames($allNodes, $nodesFromOutRelations, $rtId);
-                                if ($allInRelations != null) {
-                                    echo '<br /><br />';
+                                echo '<br /><br />';    
+                                 }
+                                if ($allInRelations != null && count($nodesFromInRelations)!=0) {
                                     echo '<u><h4> Relations entrantes :</h4></u>';
-                                    $nodesFromInRelations = getNodesIdsFromInRelations($allInRelations, $id);
                                     displayNodesNames($allNodes, $nodesFromInRelations, $rtId);
                                 }
                                 echo '</div>
                                     </div>
                                   </div>';
+                                 }
                             }
                             echo '</div>';
-                        } else {
-                            $rtName = $allRelationTypes[$rtId];
-                            //echo '<hr>';
-                            echo '<div class="panel-group" id="accordion">
-                            <div class="panel panel-default">
-                              <div class="panel-heading">
-                                <h4 class="panel-title">
-                                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse' . $rtId . '">
-                                 <center><b>' . $rtName . '</b></center></a>
-                                </h4>
-                              </div>
-                              <div id="collapse' . $rtId . '" class="panel-collapse collapse">
-                                <div class="panel-body">';
-                            //echo '<center><u><h3>' . $rtName . ' : </h3></u></center>';
-                            echo '<u><h4> Relations sortantes :</h4></u>';
-                            $nodesFromOutRelations = getNodesIdsFromOutRelations($allOutRelations, $rtId);
-                            displayNodesNames($allNodes, $nodesFromOutRelations, $rtId);
-                            if ($allInRelations != null) {
-                                echo '<u><h4> Relations entrantes :</h4></u>';
-                                $nodesFromInRelations = getNodesIdsFromInRelations($allInRelations, $rtId);
-                                displayNodesNames($allNodes, $nodesFromInRelations, $rtId);
-                            }
-                            echo '</div>
-                                </div>
-                              </div>
-                             </div>';
-                        }
+                      
                         // saving captured output to file
                         file_put_contents($filename, ob_get_contents());
                         // end buffering and displaying page

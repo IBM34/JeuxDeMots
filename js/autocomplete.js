@@ -8,7 +8,7 @@ $(document).ready(function () {
                 .appendTo(ul);
     };
     var availableTags;
-    $.get("noeuds.txt", function (data) {
+    $.get("txt/noeuds.txt", function (data) {
         availableTags = data.split(',');
         $("#terme").autocomplete({
             source: function (request, response) {

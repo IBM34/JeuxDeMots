@@ -34,7 +34,6 @@ body {
 #navbar a:hover {
     background-color: #ddd;
     color: black;
-    margin-left: 10px;
 }
 
 /* Add an active class to highlight the current page */
@@ -52,6 +51,7 @@ body {
     padding: 16px;
     width : 95%;
     margin: 0 auto;
+    
 }
 
 .sticky {
